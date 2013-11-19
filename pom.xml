@@ -137,6 +137,7 @@
                         <exclude>pom.xml</exclude>
                         <exclude>README.md</exclude>
                         <exclude>LICENSE</exclude>
+                        <exclude>src/main/assembly/appassembler-output.xml</exclude>
                     </excludes>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
