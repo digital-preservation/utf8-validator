@@ -10,7 +10,7 @@ Released under the [BSD 3-Clause Licence](http://opensource.org/licenses/BSD-3-C
 
 Use from the Command Line
 -------------------------
-You can either download the application from [here](http://TOOD) or [build from the source code](#building-from-source-code). You should extract this ZIP file to the place on your computer where you keep your applications. You can then run either `bin/validate` (Linux/Mac/Unix) or `bin\validate.bat` (Windows).
+You can either download the application from [here](http://TODO) or [build from the source code](#building-from-source-code). You should extract this ZIP file to the place on your computer where you keep your applications. You can then run either `bin/validate` (Linux/Mac/Unix) or `bin\validate.bat` (Windows).
 
 For example, to report all validation errors:
 
