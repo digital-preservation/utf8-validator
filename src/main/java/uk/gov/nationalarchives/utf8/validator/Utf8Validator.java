@@ -26,8 +26,13 @@
  */
 package uk.gov.nationalarchives.utf8.validator;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.BitSet;
+import java.util.Optional;
 
 /**
  * Validates a File or InputStream byte by byte
@@ -37,16 +42,25 @@ import java.util.BitSet;
  * @version 1.2
  */
 public class Utf8Validator {
-    
-    private ValidationHandler handler;
+
+    private static ThreadLocal<File> FILE_BEING_VALIDATED = new ThreadLocal<>();
+
+    private ValidationHandlerFunction handler;
 
     /**
      * @param handler A ValidationHandler that receives errors
      */
     public Utf8Validator(final ValidationHandler handler) {
+        this.handler = (file, message, byteOffset) -> handler.error(message, byteOffset);
+    }
+
+    /**
+     * @param handler A ValidationHandlerFunction that receives errors
+     */
+    public Utf8Validator(ValidationHandlerFunction handler) {
         this.handler = handler;
     }
-    
+
     /**
      * Validates the File as UTF-8
      * 
@@ -59,9 +73,11 @@ public class Utf8Validator {
     public void validate(final File f) throws IOException, ValidationException {
         InputStream is = null;
         try {
+            FILE_BEING_VALIDATED.set(f);
             is = new BufferedInputStream(new FileInputStream(f));
             validate(is);
         } finally {
+            FILE_BEING_VALIDATED.remove();
             if(is != null) {
                 is.close();
             }
@@ -125,7 +141,7 @@ public class Utf8Validator {
         
         //msb of a single byte character must be 0
         if(bs.get(0) == true) {
-            handler.error("Invalid single byte UTF-8 character ", byteOffset);
+            handler.error(Optional.ofNullable(FILE_BEING_VALIDATED.get()), "Invalid single byte UTF-8 character ", byteOffset);
         }
     }
     
@@ -143,14 +159,14 @@ public class Utf8Validator {
         final byte remain[] = new byte[nRemainingBytes];
         final int read = is.read(remain);
         if(read != nRemainingBytes) {
-            handler.error("Invalid UTF-8 Sequence, expecting: " + (nRemainingBytes + 1) + "bytes, but got: " + (read + 1) + "bytes - reached end of stream.", -1);
+            handler.error(Optional.ofNullable(FILE_BEING_VALIDATED.get()), "Invalid UTF-8 Sequence, expecting: " + (nRemainingBytes + 1) + "bytes, but got: " + (read + 1) + "bytes - reached end of stream.", -1);
         }
         
         for(int i = 0; i < nRemainingBytes; i++) {
             //remaining bytes must start with bits 10
             final BitSet bs = toBitSet(remain[i]);
             if(!(bs.get(0) == true &&  bs.get(1) == false)) {
-                handler.error("Invalid UTF-8 sequence, byte " + (i+2) + " of " + (nRemainingBytes+1) + " byte multibyte sequence.", (is.getByteCount() - nRemainingBytes + i + 1));
+                handler.error(Optional.ofNullable(FILE_BEING_VALIDATED.get()), "Invalid UTF-8 sequence, byte " + (i+2) + " of " + (nRemainingBytes+1) + " byte multibyte sequence.", (is.getByteCount() - nRemainingBytes + i + 1));
             }
         }
     }
