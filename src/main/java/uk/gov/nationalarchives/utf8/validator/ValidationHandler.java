@@ -33,6 +33,7 @@ package uk.gov.nationalarchives.utf8.validator;
  *
  * @author Adam Retter <adam.retter@googlemail.com>
  */
+@FunctionalInterface
 public interface ValidationHandler {
 
    /**
