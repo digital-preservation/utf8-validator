@@ -9,7 +9,7 @@
 
     <groupId>uk.gov.nationalarchives</groupId>
     <artifactId>utf8-validator</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>UTF-8 Vaidator</name>
@@ -47,8 +47,8 @@
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.source>1.6</java.source>
-        <java.target>1.6</java.target>
+        <java.source>1.8</java.source>
+        <java.target>1.8</java.target>
         <contact.email>digitalpreservation@nationalarchives.gov.uk</contact.email>
     </properties>
 
