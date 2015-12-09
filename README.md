@@ -69,6 +69,31 @@ File f = ... //your file here
 new Utf8Validator(handler).validate(f);
 ```
 
+New Java 8 features allow you to write a `ValidationHandlerFunction` or `ValidationHandler` as a lambda expression.  The `ValidationHandlerFunction` provides additional information about the validation error, including the `File` the error occurred in.  This information is encapsulated as an `Optional` because validation may be occurring over an `InputStream`.  The Java 8 Streams API allows you to parallelize validation over a large set of files.  For example:
+
+```java
+List<File> filesToValidate = ...
+
+// Stores error messages
+ConcurrentHashMap<File, Map<Long, String>> fileErrors = new ConcurrentHashMap<>();
+
+Utf8Validator validator = new Utf8Validator((file, message, off) -> {
+    if (fileErrors.containsKey(file.get())) {
+        return; // only log the first error
+    }
+   fileErrors.putIfAbsent(file.get(), new TreeMap<>());
+   fileErrors.get(file.get()).put(off, message);
+});
+
+filesToValidate.parallelStream().forEach((f) -> {
+    try {
+        validator.validate(f);
+    } catch (IOException | ValidationException e) {
+        fail("Unexpected validation exception validating " + f + ": " + e.getMessage());
+    }
+});
+```
+
 Building from Source Code
 --------------------------
 * Git clone the repository from https://github.com/digital-preservation/utf8-validator.git
