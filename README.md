@@ -29,7 +29,7 @@ $ bin/validate --fail-fast /tmp/my-file.txt
 Command Line Exit Codes
 -----------------------
 * **0** Success
-* **1** Inavlid Arguments provided to the application
+* **1** Invalid Arguments provided to the application
 * **2** File was not UTF-8 Valid
 * **4** IO Error, e.g. could not read file
 
