@@ -1,0 +1,10 @@
+version: '{build}'
+build_script:
+- cmd: mvn compile
+test_script:
+- cmd: mvn test -B package
+artifacts:
+- path: target\utf8-validator-*.jar
+  name: utf8-validator
+- path: target\utf8-validator-*-application.zip
+  name: utf8-validator-app

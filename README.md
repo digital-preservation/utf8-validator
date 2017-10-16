@@ -5,7 +5,7 @@ A UTF-8 Validation Tool which may be used as either a command line tool or as a 
 
 Released under the [BSD 3-Clause Licence](http://opensource.org/licenses/BSD-3-Clause).
 
-[![Build Status](https://travis-ci.org/digital-preservation/utf8-validator.png?branch=master)](https://travis-ci.org/digital-preservation/utf8-validator)
+[![Build Status](https://travis-ci.org/digital-preservation/utf8-validator.png?branch=master)](https://travis-ci.org/digital-preservation/utf8-validator) [![Build status](https://ci.appveyor.com/api/projects/status/8h48fd02d1pkjdwv/branch/master?svg=true)](https://ci.appveyor.com/project/AdamRetter/utf8-validator/branch/master)
 
 
 Use from the Command Line
