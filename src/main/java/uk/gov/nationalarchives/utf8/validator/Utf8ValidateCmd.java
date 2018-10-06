@@ -53,6 +53,8 @@ public class Utf8ValidateCmd {
             System.out.println("\t\tStops on the first validation error rather than reporting all errors. Default false");
             System.out.println("\t-b | --buffer-size");
             System.out.println("\t\tSize of the in-memory buffer for file data (in bytes). Default 8192");
+            System.out.println("\t-m | --mem-mapped");
+            System.out.println("\t\tUse memory mapped Disk I/O. Default false");
             System.out.println("");
             System.exit(ExitCode.INVALID_ARGS.getCode());
         }
@@ -60,6 +62,7 @@ public class Utf8ValidateCmd {
         //parse args
         boolean failFast = false;
         int bufferSize = -1;
+        boolean memMapped = false;
         final File fileToValidate;
 
         // parse args
@@ -72,6 +75,9 @@ public class Utf8ValidateCmd {
                 bufferSize = Integer.parseInt(args[++i]);
             }
 
+            if(args[i].equals("-m") || args[i].equals("--mem-mapped")) {
+                memMapped = true;
+            }
         }
         fileToValidate = new File(args[args.length - 1]);
 
@@ -88,7 +94,7 @@ public class Utf8ValidateCmd {
         System.out.println("Validating: " + fileToValidate.getPath());
         
         try {
-            new Utf8Validator(bufferSize, handler).validate(fileToValidate);
+            new Utf8Validator(memMapped, bufferSize, handler).validate(fileToValidate);
             
             if(!failFast && handler.isErrored()) {
                 result = ExitCode.VALIDATION_ERROR;
