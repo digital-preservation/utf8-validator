@@ -27,7 +27,6 @@
 package uk.gov.nationalarchives.utf8.validator;
 
 import java.io.*;
-import java.util.BitSet;
 
 /**
  * Validates a File or InputStream byte by byte
@@ -36,9 +35,14 @@ import java.util.BitSet;
  * @author Adam Retter <adam.retter@googlemail.com>
  * @version 1.2
  */
+//@NotThreadSafe
 public class Utf8Validator {
 
     private static final int DEFAULT_BUFFER_SIZE = 8192;
+
+    private static final int FOUR_BYTE_CHAR =       0xF0;   // 11110xxx
+    private static final int THREE_BYTE_CHAR =      0xE0;   // 1110xxxx
+    private static final int TWO_BYTE_CHAR =        0xC0;   // 110xxxxx
 
     private int bufferSize;
     private ValidationHandler handler;
@@ -90,126 +94,47 @@ public class Utf8Validator {
      * that an error causes an exception
      */
     public void validate(final InputStream is) throws IOException, ValidationException {
-        
-        final ByteCountingInputStream bis = new ByteCountingInputStream(is);
-        
-        final BitSet fourByteChar = new BitSet(Byte.SIZE);    
-        fourByteChar.set(0, 4);                         //11110    
-        final BitSet threeByteChar = new BitSet(Byte.SIZE);   
-        threeByteChar.set(0, 3);                        //1110
-        final BitSet twoByteChar = new BitSet(Byte.SIZE);     
-        twoByteChar.set(0, 2);                          //110
-        
-        //main processing
-        int b = -1;
-        while((b = bis.read()) > -1) {
-            final BitSet bs = toBitSet((byte)b);
+        int read = 0;                       // total bytes read
+        byte multiByteLen = 0;              // length of multi-byte character sequence (or zero if a single byte character)
+        byte multiBytesRemain = 0;          // bytes remaining to read of multi-byte character sequence (or zero if a single byte character)
+        int b = -1;                         // current byte
 
-            if(startsWith(bs, fourByteChar)) {
+        while ((b = is.read()) > -1) {
+
+            read++;
+
+            if (multiBytesRemain > 0) {
+                multiBytesRemain--;
+                if ((b >>> 6) != 2) {
+                    handler.error("Invalid UTF-8 sequence, byte " + (multiByteLen - multiBytesRemain) + " of " + multiByteLen + " byte sequence.", read);
+                }
+
+            } else if ((b & 0x80) == 0) {
+                // One byte Sequence (MSB of a single byte character must be 0)
+                continue;
+
+            } else if ((b & FOUR_BYTE_CHAR) == FOUR_BYTE_CHAR) {
                 //Four byte Sequence
-                checkRemainingBytes(bis, 3);
-            }
-            else if(startsWith(bs, threeByteChar)) {
+                multiByteLen = 4;
+                multiBytesRemain = 3;
+
+            } else if((b & THREE_BYTE_CHAR) == THREE_BYTE_CHAR) {
                 //Three byte Sequence
-                checkRemainingBytes(bis, 2);
-            }
-            else if(startsWith(bs, twoByteChar)) {
+                multiByteLen = 3;
+                multiBytesRemain = 2;
+
+            } else if((b & TWO_BYTE_CHAR) == TWO_BYTE_CHAR) {
                 //Two byte Sequence
-                checkRemainingBytes(bis, 1);
+                multiByteLen = 2;
+                multiBytesRemain = 1;
+
+            } else {
+                handler.error("Invalid single byte UTF-8 character ", read);
             }
-            else {
-                //One byte Sequence
-                checkSingleByteChar(bs, bis.getByteCount());
-            }
-        }
-    }
-    
-    /**
-     * Checks whether a single byte character is UTF-8 valid.
-     * 
-     * @param bs Bitset of the single byte character to check
-     * @param byteOffset The position of the byte in the stream
-     * 
-     * @throws ValidationException thrown if the ValidationHandler determines
-     * that an error causes an exception
-     */
-    private void checkSingleByteChar(final BitSet bs, final long byteOffset) throws ValidationException {
-        
-        //msb of a single byte character must be 0
-        if(bs.get(0) == true) {
-            handler.error("Invalid single byte UTF-8 character ", byteOffset);
-        }
-    }
-    
-    /**
-     * Checks whether the remaining bytes in a multi-byte character are valid UTF-8.
-     * 
-     * @param is The byte stream to read and check the bytes from
-     * @param nRemainingBytes The number of bytes to read and check
-     * 
-     * @throws IOException if the stream cannot be read
-     * @throws ValidationException thrown if the ValidationHandler determines
-     * that an error causes an exception
-     */
-    private void checkRemainingBytes(final ByteCountingInputStream is, final int nRemainingBytes) throws IOException, ValidationException {
-        final byte remain[] = new byte[nRemainingBytes];
-        final int read = is.read(remain);
-        if(read != nRemainingBytes) {
-            handler.error("Invalid UTF-8 Sequence, expecting: " + (nRemainingBytes + 1) + "bytes, but got: " + (read + 1) + "bytes - reached end of stream.", -1);
         }
 
-        for(int i = 0; i < nRemainingBytes; i++) {
-            //remaining bytes must start with bits 10
-            final BitSet bs = toBitSet(remain[i]);
-            if(!(bs.get(0) == true &&  bs.get(1) == false)) {
-                handler.error("Invalid UTF-8 sequence, byte " + (i+2) + " of " + (nRemainingBytes+1) + " byte multibyte sequence.", (is.getByteCount() - nRemainingBytes + i + 1));
-            }
+        if (multiBytesRemain > 0) {
+            handler.error("Invalid UTF-8 Sequence, expecting: " + multiBytesRemain + " more bytes in " + multiByteLen + " byte sequence. End of File!", read);
         }
     }
-    
-    /**
-     * Determines whether a bitset bs starts with the bits from the bitset cmp.
-     * 
-     * @param bs The bitset to check
-     * @param cmp The comparison bitset
-     * 
-     * @return true if the Bitset bs starts with the bits from the bitset cmp, else false
-     */
-    private boolean startsWith(final BitSet bs, final BitSet cmp) {
-        final BitSet nCmp = (BitSet)cmp.clone();
-        nCmp.and(bs);
-        return nCmp.equals(cmp);
-    }    
-    
-    /**
-     * Converts a byte to a BitSet MSB first.
-     * 
-     * @param b The byte to convert to a BitSet
-     * @return The BitSet representation of the byte
-     */
-    private BitSet toBitSet(final byte b) {
-        final BitSet bs = new BitSet(Byte.SIZE);
-        
-        for(int i = 0; i < Byte.SIZE; i++) {
-            if ((b & (1 <<(i % Byte.SIZE))) > 0) {
-                bs.set(Byte.SIZE -i - 1);
-            }
-        }
-        return bs;
-    }
-    
-    /*
-    private static void printBitSet(BitSet bs)
-    {
-        String bitString = new String();
-        for(int i = 0; i < Byte.SIZE; i++)
-        {
-            if(bs.get(i))
-                bitString += "1";
-            else
-                bitString += "0";
-        }
-        System.out.println(bitString);
-    }
-    */
 }
