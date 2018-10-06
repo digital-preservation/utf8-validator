@@ -187,6 +187,8 @@
                   <source>${java.source}</source>
                   <target>${java.target}</target>
                   <encoding>${project.build.sourceEncoding}</encoding>
+                  <optimize>true</optimize>
+                  <debug>false</debug>
                 </configuration>
             </plugin>
             <plugin>

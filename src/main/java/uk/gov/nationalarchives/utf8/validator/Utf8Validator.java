@@ -31,7 +31,7 @@ import java.util.BitSet;
 
 /**
  * Validates a File or InputStream byte by byte
- * to ensure it is UTF-8 Valid
+ * to ensure it is UTF-8 Valid.
  * 
  * @author Adam Retter <adam.retter@googlemail.com>
  * @version 1.2
@@ -60,7 +60,7 @@ public class Utf8Validator {
     }
     
     /**
-     * Validates the File as UTF-8
+     * Validates the File as UTF-8.
      * 
      * @param f The file to UTF-8 validate
      * 
@@ -81,7 +81,7 @@ public class Utf8Validator {
     }
     
     /**
-     * Validates Input Stream as UTF-8
+     * Validates Input Stream as UTF-8.
      * 
      * @param is Input Stream for UTF-8 validation
      * 
@@ -125,7 +125,7 @@ public class Utf8Validator {
     }
     
     /**
-     * Checks whether a single byte character is UTF-8 valid
+     * Checks whether a single byte character is UTF-8 valid.
      * 
      * @param bs Bitset of the single byte character to check
      * @param byteOffset The position of the byte in the stream
@@ -142,7 +142,7 @@ public class Utf8Validator {
     }
     
     /**
-     * Checks whether the remaining bytes in a multi-byte character are valid UTF-8
+     * Checks whether the remaining bytes in a multi-byte character are valid UTF-8.
      * 
      * @param is The byte stream to read and check the bytes from
      * @param nRemainingBytes The number of bytes to read and check
@@ -157,7 +157,7 @@ public class Utf8Validator {
         if(read != nRemainingBytes) {
             handler.error("Invalid UTF-8 Sequence, expecting: " + (nRemainingBytes + 1) + "bytes, but got: " + (read + 1) + "bytes - reached end of stream.", -1);
         }
-        
+
         for(int i = 0; i < nRemainingBytes; i++) {
             //remaining bytes must start with bits 10
             final BitSet bs = toBitSet(remain[i]);
@@ -168,7 +168,7 @@ public class Utf8Validator {
     }
     
     /**
-     * Determines whether a bitset bs starts with the bits from the bitset cmp
+     * Determines whether a bitset bs starts with the bits from the bitset cmp.
      * 
      * @param bs The bitset to check
      * @param cmp The comparison bitset
@@ -182,7 +182,7 @@ public class Utf8Validator {
     }    
     
     /**
-     * Converts a byte to a BitSet MSB first
+     * Converts a byte to a BitSet MSB first.
      * 
      * @param b The byte to convert to a BitSet
      * @return The BitSet representation of the byte
