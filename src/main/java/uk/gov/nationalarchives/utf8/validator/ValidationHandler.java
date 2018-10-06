@@ -44,6 +44,6 @@ public interface ValidationHandler {
     * @throws ValidationException, an implementation may choose to throw a
     * ValidationException on receipt of an error. Throwing a ValidationException
     * stops the Utf8Validator
-   */
-    public void error(final String message, final long byteOffset) throws ValidationException;
+    */
+    void error(final String message, final long byteOffset) throws ValidationException;
 }

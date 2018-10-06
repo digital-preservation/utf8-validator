@@ -37,13 +37,25 @@ import java.util.BitSet;
  * @version 1.2
  */
 public class Utf8Validator {
-    
+
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
+    private int bufferSize;
     private ValidationHandler handler;
 
     /**
      * @param handler A ValidationHandler that receives errors
      */
     public Utf8Validator(final ValidationHandler handler) {
+        this(DEFAULT_BUFFER_SIZE, handler);
+    }
+
+    /**
+     * @param bufferSize the amount of data from the file (in bytes) to buffer in RAM
+     * @param handler A ValidationHandler that receives errors
+     */
+    public Utf8Validator(final int bufferSize, final ValidationHandler handler) {
+        this.bufferSize = bufferSize <= 0 ? DEFAULT_BUFFER_SIZE : bufferSize;
         this.handler = handler;
     }
     
@@ -59,10 +71,10 @@ public class Utf8Validator {
     public void validate(final File f) throws IOException, ValidationException {
         InputStream is = null;
         try {
-            is = new BufferedInputStream(new FileInputStream(f));
+            is = new BufferedInputStream(new FileInputStream(f), bufferSize);
             validate(is);
         } finally {
-            if(is != null) {
+            if (is != null) {
                 is.close();
             }
         }
