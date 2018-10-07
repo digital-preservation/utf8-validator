@@ -1,5 +1,5 @@
-UTF8 Validator
-==============
+UTF-8 Validator
+===============
 
 A UTF-8 Validation Tool which may be used as either a command line tool or as a library embedded in your own program.
 

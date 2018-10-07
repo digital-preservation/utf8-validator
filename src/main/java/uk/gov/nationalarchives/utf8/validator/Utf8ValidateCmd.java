@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * UTF8 Validator Command Line
+ * UTF-8 Validator Command Line
  *
  * @author Adam Retter <adam.retter@googlemail.com>
  * @version 1.2
@@ -46,7 +46,7 @@ public class Utf8ValidateCmd {
         
         //check useage
         if(args.length < 1) {
-            System.out.println("UTF8 Validator version: " + VERSION);
+            System.out.println("UTF-8 Validator version: " + VERSION);
             System.out.println("Usage: utf8validate [options] <file>");
             System.out.println("");
             System.out.println("\t-f | --fail-fast");
