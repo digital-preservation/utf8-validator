@@ -10,7 +10,7 @@ Released under the [BSD 3-Clause Licence](http://opensource.org/licenses/BSD-3-C
 
 Use from the Command Line
 -------------------------
-You can either download the application from [here](https://search.maven.org/remotecontent?filepath=uk/gov/nationalarchives/utf8-validator/1.2/utf8-validator-1.2-application.zip) or [build from the source code](#building-from-source-code). You should extract this ZIP file to the place on your computer where you keep your applications. You can then run either `bin/validate` (Linux/Mac/Unix) or `bin\validate.bat` (Windows).
+You can either download the application from [here](https://search.maven.org/remotecontent?filepath=uk/gov/nationalarchives/utf8-validator/1.2/utf8-validator-1.2-application.zip) or [build from the source code](#building-from-source-code). You should extract this ZIP file to the place on your computer where you keep your applications. You can then run either `bin/validate.sh` (Linux/Mac/Unix) or `bin\validate.bat` (Windows).
 
 For example, to report all validation errors:
 
@@ -23,7 +23,7 @@ For example to report the first validation error and exit:
 
 ```bash
 $ cd /opt/utf8-validator-1.2
-$ bin/validate --fail-fast /tmp/my-file.txt
+$ bin/validate.sh --fail-fast /tmp/my-file.txt
 ```
 
 Command Line Exit Codes

@@ -264,6 +264,9 @@
                     <includeConfigurationDirectoryInClasspath>false</includeConfigurationDirectoryInClasspath>
                     <repositoryLayout>flat</repositoryLayout>
                     <repositoryName>lib</repositoryName>
+                    <binFileExtensions>
+                        <unix>.sh</unix>
+                    </binFileExtensions>
                     <programs>
                         <program>
                             <id>validate</id>
