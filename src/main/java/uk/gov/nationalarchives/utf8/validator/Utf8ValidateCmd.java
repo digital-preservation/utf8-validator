@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * UTF8 Validator Command Line
+ * UTF-8 Validator Command Line
  *
  * @author Adam Retter <adam.retter@googlemail.com>
  * @version 1.2
@@ -46,27 +46,43 @@ public class Utf8ValidateCmd {
         
         //check useage
         if(args.length < 1) {
-            System.out.println("UTF8 Validator version: " + VERSION);
-            System.out.println("Useage: utf8validate [options] <file>");
+            System.out.println("UTF-8 Validator version: " + VERSION);
+            System.out.println("Usage: utf8validate [options] <file>");
             System.out.println("");
             System.out.println("\t-f | --fail-fast");
-            System.out.println("\t\tStops on the first validation error rather than reporting all errors");
+            System.out.println("\t\tStops on the first validation error rather than reporting all errors. Default false");
+            System.out.println("\t-b | --buffer-size");
+            System.out.println("\t\tSize of the in-memory buffer for file data (in bytes). Default 8192");
+            System.out.println("\t-m | --mem-mapped");
+            System.out.println("\t\tUse memory mapped Disk I/O. Default false");
             System.out.println("");
             System.exit(ExitCode.INVALID_ARGS.getCode());
         }
         
         //parse args
-        final boolean failFast;
-        final File f;
-        if(args[0].equals("-f") || args[0].equals("--fail-fast")) {
-            failFast = true;
-            f = new File(args[1]);
-        } else {
-            failFast = false;
-            f = new File(args[0]);
+        boolean failFast = false;
+        int bufferSize = -1;
+        boolean memMapped = false;
+        final File fileToValidate;
+
+        // parse args
+        for (int i = 0; i < args.length - 1; i++) {
+            if(args[i].equals("-f") || args[i].equals("--fail-fast")) {
+                failFast = true;
+            }
+
+            if(args[i].equals("-b") || args[i].equals("--buffer-size")) {
+                bufferSize = Integer.parseInt(args[++i]);
+            }
+
+            if(args[i].equals("-m") || args[i].equals("--mem-mapped")) {
+                memMapped = true;
+            }
         }
-        if(!f.exists()) {
-            System.out.println("File: " + f.getPath() + " does not exist!");
+        fileToValidate = new File(args[args.length - 1]);
+
+        if(!fileToValidate.exists()) {
+            System.out.println("File: " + fileToValidate.getPath() + " does not exist!");
             System.exit(ExitCode.INVALID_ARGS.getCode());
         }
         
@@ -75,10 +91,10 @@ public class Utf8ValidateCmd {
         ExitCode result = ExitCode.OK;
         final long start = System.currentTimeMillis();
         
-        System.out.println("Validating: " + f.getPath());
+        System.out.println("Validating: " + fileToValidate.getPath());
         
         try {
-            new Utf8Validator(handler).validate(f);
+            new Utf8Validator(memMapped, bufferSize, handler).validate(fileToValidate);
             
             if(!failFast && handler.isErrored()) {
                 result = ExitCode.VALIDATION_ERROR;
