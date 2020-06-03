@@ -67,7 +67,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -144,6 +144,8 @@
                         <exclude>README.md</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>src/main/assembly/appassembler-output.xml</exclude>
+                        <exclude>.travis.yml</exclude>
+                        <exclude>appveyor.yml</exclude>
                     </excludes>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
