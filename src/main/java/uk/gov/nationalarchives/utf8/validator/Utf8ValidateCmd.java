@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2011, The National Archives <digitalpreservation@nationalarchives.gov.uk>
  * All rights reserved.
  *
