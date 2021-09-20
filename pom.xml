@@ -47,8 +47,8 @@
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.source>1.6</java.source>
-        <java.target>1.6</java.target>
+        <java.source>1.8</java.source>
+        <java.target>1.8</java.target>
         <contact.email>digitalpreservation@nationalarchives.gov.uk</contact.email>
     </properties>
 
@@ -67,7 +67,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.1</version>
+                    <version>3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -144,8 +144,8 @@
                         <exclude>README.md</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>src/main/assembly/appassembler-output.xml</exclude>
-                        <exclude>.travis.yml</exclude>
-                        <exclude>appveyor.yml</exclude>
+                        <exclude>.github/workflows/ci.yml</exclude>
+                        <exclude>.github/dependabot.yml</exclude>
                     </excludes>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
