@@ -47,8 +47,8 @@
     <properties>    
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.source>1.8</java.source>
-        <java.target>1.8</java.target>
+        <java.source>1.7</java.source>
+        <java.target>1.7</java.target>
         <contact.email>digitalpreservation@nationalarchives.gov.uk</contact.email>
     </properties>
 
